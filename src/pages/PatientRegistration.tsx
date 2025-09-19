@@ -1,0 +1,375 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { ArrowLeft, Heart, Shield, User } from "lucide-react";
+
+const patientSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  birthDate: z.string().min(1, "Birth date is required"),
+  sex: z.enum(["M", "F"], { required_error: "Please select gender" }),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  hasAllergy: z.boolean().default(false),
+  primaryAllergy: z.string().optional(),
+  nin: z.string().min(11, "NIN must be 11 digits").max(11, "NIN must be 11 digits"),
+  emergencyContact: z.string().min(1, "Emergency contact is required"),
+  emergencyPhone: z.string().min(1, "Emergency phone is required"),
+});
+
+type PatientFormData = z.infer<typeof patientSchema>;
+
+const PatientRegistration = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<PatientFormData>({
+    resolver: zodResolver(patientSchema),
+    defaultValues: {
+      hasAllergy: false,
+    },
+  });
+
+  const watchHasAllergy = form.watch("hasAllergy");
+
+  const onSubmit = async (data: PatientFormData) => {
+    setIsSubmitting(true);
+    try {
+      // Here you would integrate with Supabase to save patient data
+      console.log("Patient registration data:", data);
+      
+      toast({
+        title: "Registration Successful!",
+        description: "Your UHID has been generated and sent to your phone number.",
+        variant: "default",
+      });
+      
+      // Reset form after successful submission
+      form.reset();
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: "Please try again or contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Back Navigation */}
+        <div className="mb-8">
+          <Button variant="ghost" asChild>
+            <Link to="/" className="flex items-center space-x-2">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Home</span>
+            </Link>
+          </Button>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="gradient-primary rounded-full p-4 w-20 h-20 mx-auto mb-6">
+              <User className="h-12 w-12 text-white" />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              Patient Registration
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Get your Unique Health ID (UHID) and join Nigeria's unified healthcare system
+            </p>
+          </div>
+
+          {/* Benefits Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <Card className="text-center">
+              <CardContent className="pt-6">
+                <Heart className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold mb-2">Unified Records</h3>
+                <p className="text-sm text-muted-foreground">All your medical history in one place</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="text-center">
+              <CardContent className="pt-6">
+                <Shield className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold mb-2">Enhanced Safety</h3>
+                <p className="text-sm text-muted-foreground">Prevent medical errors with accurate data</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="text-center">
+              <CardContent className="pt-6">
+                <User className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold mb-2">Easy Access</h3>
+                <p className="text-sm text-muted-foreground">Access your records anytime, anywhere</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Registration Form */}
+          <Card className="shadow-medium">
+            <CardHeader>
+              <CardTitle>Patient Information</CardTitle>
+              <CardDescription>
+                Please provide accurate information to create your UHID. All fields marked with * are required.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  {/* Personal Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold border-b pb-2">Personal Information</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="firstName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>First Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your first name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="lastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Last Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your last name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="birthDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Date of Birth *</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="sex"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Gender *</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select gender" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="M">Male</SelectItem>
+                                <SelectItem value="F">Female</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="nin"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>National Identification Number (NIN) *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your 11-digit NIN" maxLength={11} {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Your NIN will be used to link your health records securely
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Contact Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold border-b pb-2">Contact Information</h3>
+                    
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="+234 XXX XXX XXXX" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Enter your full address" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Emergency Contact */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold border-b pb-2">Emergency Contact</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="emergencyContact"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Emergency Contact Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Next of kin name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="emergencyPhone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Emergency Contact Phone *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="+234 XXX XXX XXXX" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Medical Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold border-b pb-2">Medical Information</h3>
+                    
+                    <FormField
+                      control={form.control}
+                      name="hasAllergy"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>
+                              I have known allergies
+                            </FormLabel>
+                            <FormDescription>
+                              Check this if you have any known allergies
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {watchHasAllergy && (
+                      <FormField
+                        control={form.control}
+                        name="primaryAllergy"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Primary Allergy</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Describe your primary allergy" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                              This information is critical for your safety during medical emergencies
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-6">
+                    <Button
+                      type="submit"
+                      variant="hero"
+                      size="lg"
+                      className="w-full"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Processing..." : "Register & Get My UHID"}
+                    </Button>
+                    
+                    <p className="text-center text-sm text-muted-foreground mt-4">
+                      By registering, you agree to our{" "}
+                      <Link to="#" className="text-primary hover:underline">Terms of Service</Link>
+                      {" "}and{" "}
+                      <Link to="#" className="text-primary hover:underline">Privacy Policy</Link>
+                    </p>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default PatientRegistration;
