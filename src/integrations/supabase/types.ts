@@ -137,6 +137,54 @@ export type Database = {
           },
         ]
       }
+      government_users: {
+        Row: {
+          access_expiry: string | null
+          access_level: string | null
+          contact_person_name: string
+          created_at: string | null
+          department: string | null
+          employee_id: string
+          gov_user_id: number
+          government_id: string
+          job_title: string
+          official_email: string
+          organization_name: string
+          organization_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_expiry?: string | null
+          access_level?: string | null
+          contact_person_name: string
+          created_at?: string | null
+          department?: string | null
+          employee_id: string
+          gov_user_id?: number
+          government_id: string
+          job_title: string
+          official_email: string
+          organization_name: string
+          organization_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_expiry?: string | null
+          access_level?: string | null
+          contact_person_name?: string
+          created_at?: string | null
+          department?: string | null
+          employee_id?: string
+          gov_user_id?: number
+          government_id?: string
+          job_title?: string
+          official_email?: string
+          organization_name?: string
+          organization_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       imaging: {
         Row: {
           appointment_id: number | null
@@ -185,29 +233,107 @@ export type Database = {
           },
         ]
       }
+      institution_messages: {
+        Row: {
+          attachments: string[] | null
+          created_at: string | null
+          message_content: string
+          message_id: number
+          read_at: string | null
+          receiver_institution_id: number | null
+          sender_institution_id: number | null
+          sent_at: string | null
+          subject: string
+        }
+        Insert: {
+          attachments?: string[] | null
+          created_at?: string | null
+          message_content: string
+          message_id?: number
+          read_at?: string | null
+          receiver_institution_id?: number | null
+          sender_institution_id?: number | null
+          sent_at?: string | null
+          subject: string
+        }
+        Update: {
+          attachments?: string[] | null
+          created_at?: string | null
+          message_content?: string
+          message_id?: number
+          read_at?: string | null
+          receiver_institution_id?: number | null
+          sender_institution_id?: number | null
+          sent_at?: string | null
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_messages_receiver_institution_id_fkey"
+            columns: ["receiver_institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["institution_id"]
+          },
+          {
+            foreignKeyName: "institution_messages_sender_institution_id_fkey"
+            columns: ["sender_institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["institution_id"]
+          },
+        ]
+      }
       institutions: {
         Row: {
           address: string
+          bed_capacity: number | null
+          cac_number: string | null
           contact: string | null
           created_at: string | null
+          email: string | null
+          institution_code: string | null
           institution_id: number
+          license_expiry: string | null
+          license_number: string | null
           name: string
+          password_hash: string | null
+          services_offered: string[] | null
+          status: string | null
           type: string
         }
         Insert: {
           address: string
+          bed_capacity?: number | null
+          cac_number?: string | null
           contact?: string | null
           created_at?: string | null
+          email?: string | null
+          institution_code?: string | null
           institution_id?: number
+          license_expiry?: string | null
+          license_number?: string | null
           name: string
+          password_hash?: string | null
+          services_offered?: string[] | null
+          status?: string | null
           type: string
         }
         Update: {
           address?: string
+          bed_capacity?: number | null
+          cac_number?: string | null
           contact?: string | null
           created_at?: string | null
+          email?: string | null
+          institution_code?: string | null
           institution_id?: number
+          license_expiry?: string | null
+          license_number?: string | null
           name?: string
+          password_hash?: string | null
+          services_offered?: string[] | null
+          status?: string | null
           type?: string
         }
         Relationships: []
@@ -271,9 +397,12 @@ export type Database = {
           address: string | null
           birth_date: string
           created_at: string | null
+          emergency_contact: string | null
+          emergency_phone: string | null
           first_name: string
           has_allergy: boolean | null
           last_name: string
+          nin: string | null
           patient_id: number
           phone: string | null
           primary_allergy: string | null
@@ -285,9 +414,12 @@ export type Database = {
           address?: string | null
           birth_date: string
           created_at?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
           first_name: string
           has_allergy?: boolean | null
           last_name: string
+          nin?: string | null
           patient_id?: number
           phone?: string | null
           primary_allergy?: string | null
@@ -299,9 +431,12 @@ export type Database = {
           address?: string | null
           birth_date?: string
           created_at?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
           first_name?: string
           has_allergy?: boolean | null
           last_name?: string
+          nin?: string | null
           patient_id?: number
           phone?: string | null
           primary_allergy?: string | null
@@ -368,23 +503,33 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string | null
+          government_user_id: number | null
           id: string
           updated_at: string | null
           user_id: number | null
         }
         Insert: {
           created_at?: string | null
+          government_user_id?: number | null
           id: string
           updated_at?: string | null
           user_id?: number | null
         }
         Update: {
           created_at?: string | null
+          government_user_id?: number | null
           id?: string
           updated_at?: string | null
           user_id?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_government_user_id_fkey"
+            columns: ["government_user_id"]
+            isOneToOne: false
+            referencedRelation: "government_users"
+            referencedColumns: ["gov_user_id"]
+          },
           {
             foreignKeyName: "profiles_user_id_fkey"
             columns: ["user_id"]
@@ -414,6 +559,59 @@ export type Database = {
           role_name?: string
         }
         Relationships: []
+      }
+      staff: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          first_name: string
+          institution_id: number | null
+          last_name: string
+          license_number: string | null
+          phone: string | null
+          profession: string
+          specialty: string | null
+          staff_code: string
+          staff_id: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          first_name: string
+          institution_id?: number | null
+          last_name: string
+          license_number?: string | null
+          phone?: string | null
+          profession: string
+          specialty?: string | null
+          staff_code: string
+          staff_id?: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          first_name?: string
+          institution_id?: number | null
+          last_name?: string
+          license_number?: string | null
+          phone?: string | null
+          profession?: string
+          specialty?: string | null
+          staff_code?: string
+          staff_id?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["institution_id"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -485,7 +683,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_uhid: {
+        Args: { patient_nin: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
