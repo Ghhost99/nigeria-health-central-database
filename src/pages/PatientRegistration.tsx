@@ -13,7 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Heart, Shield, User } from "lucide-react";
+import { ArrowLeft, Heart, Shield, User, Download, Copy } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const patientSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -33,6 +34,7 @@ type PatientFormData = z.infer<typeof patientSchema>;
 
 const PatientRegistration = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [generatedUHID, setGeneratedUHID] = useState<string | null>(null);
   const { toast } = useToast();
 
   const form = useForm<PatientFormData>({
@@ -44,24 +46,93 @@ const PatientRegistration = () => {
 
   const watchHasAllergy = form.watch("hasAllergy");
 
+  const copyUHID = () => {
+    if (generatedUHID) {
+      navigator.clipboard.writeText(generatedUHID);
+      toast({
+        title: "UHID Copied!",
+        description: "Your UHID has been copied to clipboard.",
+      });
+    }
+  };
+
+  const downloadUHIDPDF = () => {
+    const patientData = localStorage.getItem('patientData');
+    if (patientData) {
+      const data = JSON.parse(patientData);
+      const pdfContent = `
+        NIGERIA HEALTH CENTRAL DATABASE
+        
+        UNIQUE HEALTH ID (UHID) CERTIFICATE
+        
+        Patient Name: ${data.name}
+        UHID: ${data.uhid}
+        NIN: ${data.nin}
+        Date Generated: ${data.dateGenerated}
+        
+        This UHID is your unique identifier in Nigeria's unified healthcare system.
+        Keep this safe and use it for all medical consultations.
+      `;
+      
+      const blob = new Blob([pdfContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `UHID-${data.uhid}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
+
   const onSubmit = async (data: PatientFormData) => {
     setIsSubmitting(true);
     try {
-      // Here you would integrate with Supabase to save patient data
-      console.log("Patient registration data:", data);
+      // Insert patient data into database
+      const { data: patientData, error } = await supabase
+        .from('patients')
+        .insert({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          birth_date: data.birthDate,
+          sex: data.sex,
+          phone: data.phone || null,
+          address: data.address || null,
+          has_allergy: data.hasAllergy,
+          primary_allergy: data.hasAllergy ? data.primaryAllergy : null,
+          nin: data.nin,
+          emergency_contact: data.emergencyContact,
+          emergency_phone: data.emergencyPhone,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      setGeneratedUHID(patientData.uhid);
       
       toast({
         title: "Registration Successful!",
-        description: "Your UHID has been generated and sent to your phone number.",
+        description: `Your UHID is: ${patientData.uhid}. Please save this for future logins.`,
         variant: "default",
       });
-      
-      // Reset form after successful submission
-      form.reset();
-    } catch (error) {
+
+      // Store UHID for download
+      localStorage.setItem('generatedUHID', patientData.uhid);
+      localStorage.setItem('patientData', JSON.stringify({
+        name: `${data.firstName} ${data.lastName}`,
+        uhid: patientData.uhid,
+        nin: data.nin,
+        dateGenerated: new Date().toLocaleDateString()
+      }));
+    } catch (error: any) {
+      console.error("Registration error:", error);
       toast({
         title: "Registration Failed",
-        description: "Please try again or contact support.",
+        description: error.message || "Please try again or contact support.",
         variant: "destructive",
       });
     } finally {
@@ -341,6 +412,47 @@ const PatientRegistration = () => {
                     )}
                   </div>
 
+                  {/* UHID Display Section */}
+                  {generatedUHID && (
+                    <div className="bg-gradient-primary/10 border border-primary/20 rounded-lg p-6 space-y-4">
+                      <div className="text-center">
+                        <h3 className="text-lg font-semibold text-primary mb-2">
+                          Your UHID Has Been Generated!
+                        </h3>
+                        <div className="bg-white border-2 border-primary rounded-lg p-4 inline-block">
+                          <p className="text-sm text-muted-foreground mb-1">Your Unique Health ID</p>
+                          <p className="text-2xl font-bold text-primary tracking-wider">{generatedUHID}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-3 justify-center">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={copyUHID}
+                          className="flex items-center gap-2"
+                        >
+                          <Copy className="h-4 w-4" />
+                          Copy UHID
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={downloadUHIDPDF}
+                          className="flex items-center gap-2"
+                        >
+                          <Download className="h-4 w-4" />
+                          Download Certificate
+                        </Button>
+                      </div>
+                      
+                      <div className="text-center text-sm text-muted-foreground">
+                        <p className="font-medium mb-1">Important:</p>
+                        <p>Save your UHID safely. You'll need it to log into the patient portal and for all future medical consultations.</p>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Submit Button */}
                   <div className="pt-6">
                     <Button
@@ -348,9 +460,9 @@ const PatientRegistration = () => {
                       variant="hero"
                       size="lg"
                       className="w-full"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || generatedUHID !== null}
                     >
-                      {isSubmitting ? "Processing..." : "Register & Get My UHID"}
+                      {isSubmitting ? "Processing..." : generatedUHID ? "Registration Complete" : "Register & Get My UHID"}
                     </Button>
                     
                     <p className="text-center text-sm text-muted-foreground mt-4">
