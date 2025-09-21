@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Building2, CheckCircle, Clock, BarChart3 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const institutionSchema = z.object({
   name: z.string().min(2, "Institution name must be at least 2 characters"),
@@ -63,21 +64,44 @@ const InstitutionRegistration = () => {
   const onSubmit = async (data: InstitutionFormData) => {
     setIsSubmitting(true);
     try {
-      // Here you would integrate with Supabase to save institution data
-      console.log("Institution registration data:", data);
-      
+      // Insert institution data into database
+      const { data: institutionData, error } = await supabase
+        .from('institutions')
+        .insert({
+          name: data.name,
+          type: data.type,
+          address: data.address,
+          contact: data.contact || null,
+          cac_number: data.registrationNumber,
+          license_number: data.licenseNumber,
+          services_offered: [data.servicesOffered],
+          bed_capacity: data.capacity ? parseInt(data.capacity) : null,
+          email: data.contactPersonEmail,
+          status: 'pending',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Registration Submitted Successfully!",
-        description: "Your institution registration is under review. You'll receive an email confirmation within 2-3 business days.",
+        description: `Institution ID: ${institutionData.institution_id}. You'll receive an email confirmation within 2-3 business days.`,
         variant: "default",
       });
       
+      // Store institution data for potential login
+      localStorage.setItem('institutionId', institutionData.institution_id.toString());
+      
       // Reset form after successful submission
       form.reset();
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Registration error:", error);
       toast({
         title: "Registration Failed",
-        description: "Please try again or contact support.",
+        description: error.message || "Please try again or contact support.",
         variant: "destructive",
       });
     } finally {

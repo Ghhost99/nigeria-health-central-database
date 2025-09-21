@@ -11,6 +11,7 @@ import InstitutionRegistration from "./pages/InstitutionRegistration";
 import InstitutionLogin from "./pages/InstitutionLogin";
 import InstitutionDashboard from "./pages/InstitutionDashboard";
 import GovernmentPortal from "./pages/GovernmentPortal";
+import GovernmentRegistration from "./pages/GovernmentRegistration";
 import GovernmentLogin from "./pages/GovernmentLogin";
 import GovernmentDashboard from "./pages/GovernmentDashboard";
 import NotFound from "./pages/NotFound";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/institution-login" element={<InstitutionLogin />} />
           <Route path="/institution-dashboard" element={<InstitutionDashboard />} />
           <Route path="/government-portal" element={<GovernmentPortal />} />
+          <Route path="/government-registration" element={<GovernmentRegistration />} />
           <Route path="/government-login" element={<GovernmentLogin />} />
           <Route path="/government-dashboard" element={<GovernmentDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
