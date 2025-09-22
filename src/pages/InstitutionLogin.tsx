@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Building2, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Building2, Eye, EyeOff, Shield, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const loginSchema = z.object({
@@ -171,7 +171,14 @@ const InstitutionLogin = () => {
                     className="w-full"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Signing In..." : "Login"}
+                    {isSubmitting ? (
+                      <>
+                        <Lock className="h-4 w-4 mr-2 animate-spin" />
+                        Signing In...
+                      </>
+                    ) : (
+                      "Login"
+                    )}
                   </Button>
                 </form>
               </Form>

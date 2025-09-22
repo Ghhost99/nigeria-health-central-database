@@ -20,7 +20,7 @@ const patientSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
   birthDate: z.string().min(1, "Birth date is required"),
-  sex: z.enum(["M", "F"], { required_error: "Please select gender" }),
+  sex: z.enum(["Male", "Female", "Other"], { required_error: "Please select gender" }),
   phone: z.string().optional(),
   address: z.string().optional(),
   hasAllergy: z.boolean().default(false),
@@ -269,8 +269,9 @@ const PatientRegistration = () => {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="M">Male</SelectItem>
-                                <SelectItem value="F">Female</SelectItem>
+                                <SelectItem value="Male">Male</SelectItem>
+                                <SelectItem value="Female">Female</SelectItem>
+                                <SelectItem value="Other">Other</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />

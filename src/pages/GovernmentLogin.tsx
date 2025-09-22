@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Shield, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Shield, Eye, EyeOff, Lock, Badge as BadgeIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const loginSchema = z.object({
@@ -26,7 +26,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const GovernmentLogin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showGovId, setShowGovId] = useState(false);
+  const [showGovernmentId, setShowGovernmentId] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -209,7 +209,7 @@ const GovernmentLogin = () => {
                         <div className="relative">
                           <FormControl>
                             <Input
-                              type={showGovId ? "text" : "password"}
+                              type={showGovernmentId ? "text" : "password"}
                               placeholder="Enter your Government ID"
                               className="pr-10"
                               {...field}
@@ -220,9 +220,9 @@ const GovernmentLogin = () => {
                             variant="ghost"
                             size="sm"
                             className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                            onClick={() => setShowGovId(!showGovId)}
+                            onClick={() => setShowGovernmentId(!showGovernmentId)}
                           >
-                            {showGovId ? (
+                            {showGovernmentId ? (
                               <EyeOff className="h-4 w-4" />
                             ) : (
                               <Eye className="h-4 w-4" />

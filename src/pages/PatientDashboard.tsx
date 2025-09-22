@@ -1,29 +1,31 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { 
-  User, 
   Calendar, 
-  FileText, 
   Pill, 
-  Activity, 
+  FileText, 
+  Camera, 
+  Heart, 
+  CreditCard, 
   Shield, 
   Settings, 
-  LogOut,
+  Download,
   QrCode,
   Bell,
-  Download,
-  Heart,
+  Activity,
   AlertTriangle,
+  CheckCircle,
   Clock,
-  Phone
+  User,
+  LogOut
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface PatientData {
   patient_id: number;
