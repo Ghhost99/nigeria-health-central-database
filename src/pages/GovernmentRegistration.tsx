@@ -464,6 +464,17 @@ const GovernmentRegistration = () => {
               </div>
             </CardContent>
           </Card>
+          
+          {/* Login Link */}
+          <div className="text-center mt-6 p-4 border rounded-lg bg-muted/50">
+            <p className="text-sm text-muted-foreground mb-2">Already have government access?</p>
+            <Link 
+              to="/government-login" 
+              className="text-primary hover:underline font-medium"
+            >
+              Login to Government Portal
+            </Link>
+          </div>
         </div>
       </div>
       

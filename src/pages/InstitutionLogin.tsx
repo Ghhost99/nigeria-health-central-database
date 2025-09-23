@@ -10,19 +10,18 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Building2, Eye, EyeOff, Shield, Lock } from "lucide-react";
+import { ArrowLeft, Building2, Shield, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const loginSchema = z.object({
-  institutionId: z.string().min(1, "Institution ID/Email is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  institutionId: z.string().min(1, "Institution ID is required"),
+  licenseNumber: z.string().min(1, "Healthcare license number is required"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const InstitutionLogin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -33,19 +32,18 @@ const InstitutionLogin = () => {
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
     try {
-      // Find institution by institution_code or email
+      // Find institution by institution_id and license_number
       const { data: institutionData, error } = await supabase
         .from('institutions')
         .select('*')
-        .or(`institution_code.eq.${data.institutionId},email.eq.${data.institutionId}`)
+        .eq('institution_id', parseInt(data.institutionId))
+        .eq('license_number', data.licenseNumber)
         .single();
 
       if (error || !institutionData) {
-        throw new Error("Invalid credentials. Please check your Institution ID/Email.");
+        throw new Error("Institution not found. Please check your Institution ID and Healthcare License Number.");
       }
 
-      // In a real implementation, you would verify the password hash
-      // For now, we'll simulate successful login
       if (institutionData.status !== 'approved') {
         throw new Error("Your institution registration is still pending approval.");
       }
@@ -118,10 +116,10 @@ const InstitutionLogin = () => {
                     name="institutionId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Institution ID / Email</FormLabel>
+                        <FormLabel>Institution ID</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter your Institution ID or Email"
+                            placeholder="Enter your Institution ID"
                             {...field}
                           />
                         </FormControl>
@@ -132,33 +130,16 @@ const InstitutionLogin = () => {
 
                   <FormField
                     control={form.control}
-                    name="password"
+                    name="licenseNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <div className="relative">
-                          <FormControl>
-                            <Input
-                              type={showPassword ? "text" : "password"}
-                              placeholder="Enter your password"
-                              className="pr-10"
-                              {...field}
-                            />
-                          </FormControl>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
+                        <FormLabel>Healthcare License Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your Healthcare License Number"
+                            {...field}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -177,19 +158,13 @@ const InstitutionLogin = () => {
                         Signing In...
                       </>
                     ) : (
-                      "Login"
+                      "Secure Login"
                     )}
                   </Button>
                 </form>
               </Form>
 
               <div className="mt-6 text-center space-y-4">
-                <div className="text-sm">
-                  <Link to="#" className="text-primary hover:underline">
-                    Forgot Password?
-                  </Link>
-                </div>
-                
                 <div className="text-sm text-muted-foreground">
                   Not registered yet?{" "}
                   <Link to="/institution-registration" className="text-primary hover:underline font-medium">
@@ -208,11 +183,17 @@ const InstitutionLogin = () => {
 
           {/* Security Features */}
           <div className="mt-6 space-y-3">
-            <div className="text-center text-sm text-muted-foreground">
-              <p>🔒 Multi-factor authentication available</p>
+            <div className="bg-muted/50 p-4 rounded-lg border">
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                <Shield className="h-4 w-4 text-primary" />
+                <span>Secure access for authorized personnel only</span>
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                All access attempts are monitored and logged
+              </div>
             </div>
             <div className="text-center text-sm text-muted-foreground">
-              <p>🏥 Verified healthcare institutions only</p>
+              <p>🔒 Two-factor authentication ready</p>
             </div>
           </div>
         </div>

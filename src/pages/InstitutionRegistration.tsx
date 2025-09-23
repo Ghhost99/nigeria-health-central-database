@@ -447,6 +447,16 @@ const InstitutionRegistration = () => {
                       <Link to="#" className="text-primary hover:underline">Privacy Policy</Link>
                       . You will receive a confirmation email within 2-3 business days.
                     </p>
+                    
+                    <div className="text-center pt-4 border-t mt-4">
+                      <p className="text-sm text-muted-foreground mb-2">Already registered?</p>
+                      <Link 
+                        to="/institution-login" 
+                        className="text-primary hover:underline font-medium"
+                      >
+                        Login to Institution Portal
+                      </Link>
+                    </div>
                   </div>
                 </form>
               </Form>

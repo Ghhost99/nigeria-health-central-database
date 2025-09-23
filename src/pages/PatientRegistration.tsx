@@ -472,6 +472,16 @@ const PatientRegistration = () => {
                       {" "}and{" "}
                       <Link to="#" className="text-primary hover:underline">Privacy Policy</Link>
                     </p>
+                    
+                    <div className="text-center pt-4 border-t mt-4">
+                      <p className="text-sm text-muted-foreground mb-2">Already have a UHID?</p>
+                      <Link 
+                        to="/patient-login" 
+                        className="text-primary hover:underline font-medium"
+                      >
+                        Login to Patient Portal
+                      </Link>
+                    </div>
                   </div>
                 </form>
               </Form>
