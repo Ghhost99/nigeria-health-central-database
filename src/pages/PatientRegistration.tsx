@@ -89,6 +89,23 @@ const PatientRegistration = () => {
   const onSubmit = async (data: PatientFormData) => {
     setIsSubmitting(true);
     try {
+      // Check if NIN already exists
+      const { data: existingPatient } = await supabase
+        .from('patients')
+        .select('uhid, first_name, last_name')
+        .eq('nin', data.nin)
+        .single();
+
+      if (existingPatient) {
+        toast({
+          title: "NIN Already Registered",
+          description: `This NIN is already registered to ${existingPatient.first_name} ${existingPatient.last_name}. Your UHID is: ${existingPatient.uhid}`,
+          variant: "destructive",
+        });
+        setGeneratedUHID(existingPatient.uhid);
+        return;
+      }
+
       // Insert patient data into database
       const { data: patientData, error } = await supabase
         .from('patients')
