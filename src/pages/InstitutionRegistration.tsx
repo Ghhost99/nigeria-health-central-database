@@ -116,12 +116,19 @@ const InstitutionRegistration = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back Navigation */}
         <div className="mb-8">
-          <Button variant="ghost" asChild>
-            <Link to="/" className="flex items-center space-x-2">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Home</span>
-            </Link>
-          </Button>
+          <div className="flex items-center justify-between">
+            <Button variant="ghost" asChild>
+              <Link to="/" className="flex items-center space-x-2">
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back to Home</span>
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link to="/institution-login" className="flex items-center space-x-2">
+                <span>Already registered? Login</span>
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <div className="max-w-4xl mx-auto">
