@@ -684,7 +684,7 @@ export type Database = {
     }
     Functions: {
       generate_uhid: {
-        Args: { patient_nin: string }
+        Args: { patient_nin?: string }
         Returns: string
       }
     }
