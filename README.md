@@ -1,58 +1,17 @@
-# Welcome to your Lovable project
+# Welcome to Nigeria Health Central Database
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/6f14b0e3-ac31-41a6-a331-208b939c0412
+**URL**: https://nigeria-health-central-database.vercel.app/
 
-## How can I edit this code?
+##Features
+	##•	Centralized health records management.
+	##•	Secure storage and retrieval of patient data.
+	##•	Role-based access (patients, healthcare workers, administrators).
+	##•	Analytics dashboard for tracking health trends.
+	##•	RESTful API for integration with other systems.
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/6f14b0e3-ac31-41a6-a331-208b939c0412) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
+##This project is built with:
 
 - Vite
 - TypeScript
@@ -60,14 +19,26 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+##Usage
+	1.	Register as a new user (patient, healthcare worker, or admin).
+	2.	Log in to access features based on your role.
+	3.	Add, update, or retrieve health records.
+	4.	Use the API endpoints for integration with third-party apps.
 
-Simply open [Lovable](https://lovable.dev/projects/6f14b0e3-ac31-41a6-a331-208b939c0412) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
 
-Yes, you can!
+##Security & Privacy
+	•	All sensitive data is encrypted.
+	•	Authentication and authorization implemented via JWT / OAuth.
+	•	Complies with global health data standards (HIPAA, GDPR best practices).
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+
+##Contributions are welcome!
+	1.	Fork the repo.
+	2.	Create your feature branch (git checkout -b feature/new-feature).
+	3.	Commit your changes (git commit -m 'Add new feature').
+	4.	Push to the branch (git push origin feature/new-feature).
+	5.	Open a Pull Request.
+
